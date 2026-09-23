@@ -405,10 +405,14 @@
       translate: -50% 0;
       border-radius: 25px;
       transition: transform .38s cubic-bezier(.22,.76,.2,1), opacity .28s ease;
+      backface-visibility: hidden;
+      transform-style: preserve-3d;
     }
-    .fact-shadow-card.one { top: 11px; transform: rotate(-2.5deg) scale(.968); }
-    .fact-shadow-card.two { top: 20px; transform: rotate(2.8deg) scale(.94); }
-    .fact-shadow-card { object-fit: contain; box-shadow: 0 14px 32px rgba(35,20,83,.08); }
+    .fact-shadow-card.one { z-index: 2; top: 11px; transform: rotate(-2.5deg) scale(.968); }
+    .fact-shadow-card.two { z-index: 1; top: 20px; transform: rotate(2.8deg) scale(.94); object-fit: contain; }
+    .fact-shadow-card { overflow: hidden; background: transparent; box-shadow: 0 14px 32px rgba(35,20,83,.08); pointer-events: none; will-change: transform; }
+    .fact-stage.advancing .fact-shadow-card.one { transform: translate3d(0, -11px, 0) rotate(0) scale(1); }
+    .fact-stage.advancing .fact-shadow-card.two { transform: translate3d(0, -9px, 0) rotate(-2.5deg) scale(.968); }
     .fact-card {
       z-index: 3;
       top: 0;
@@ -422,12 +426,6 @@
     }
     .fact-card:focus-visible { outline: 3px solid white; outline-offset: -6px; }
     .fact-card.dragging { transition: none; cursor: grabbing; }
-    .fact-card.fact-enter-up { animation: factInUp .54s cubic-bezier(.16,1,.3,1) backwards; }
-    @keyframes factInUp {
-      0% { opacity: .42; transform: translate3d(0, 18%, 0) scale(.93); }
-      68% { opacity: 1; transform: translate3d(0, -1.4%, 0) scale(1.008); }
-      100% { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
-    }
     .fact-card-art {
       position: absolute;
       inset: 0;
@@ -650,7 +648,6 @@
     let taskTab = 'available';
     let shopFilter = 'all';
     let factIndex = 0;
-    let factEnterDirection = 0;
     let quiz = null;
     let pendingReward = null;
     let toastTimer = null;
@@ -804,16 +801,21 @@
     function renderFacts() {
       markFactSeen();
       const fact = facts[factIndex];
+      const nextFact = facts[(factIndex + 1) % facts.length];
       const cardArt = factCards[factIndex % factCards.length];
       const nextCardArt = factCards[(factIndex + 1) % factCards.length];
       const afterNextCardArt = factCards[(factIndex + 2) % factCards.length];
-      const enterClass = factEnterDirection ? 'fact-enter-up' : '';
-      factEnterDirection = 0;
       page.innerHTML = `
         <div class="fact-stage" id="factStage">
-          <img class="fact-shadow-card one" src="${nextCardArt.src}" alt="" aria-hidden="true">
+          <article class="fact-shadow-card one" aria-hidden="true" style="--fact-text:${nextCardArt.text}">
+            <img class="fact-card-art" src="${nextCardArt.src}" alt="">
+            <div class="fact-content">
+              <h2>${nextFact.title}</h2>
+              <p>${nextFact.body}</p>
+            </div>
+          </article>
           <img class="fact-shadow-card two" src="${afterNextCardArt.src}" alt="" aria-hidden="true">
-          <article class="fact-card ${enterClass}" id="factCard" tabindex="0" aria-label="Факт ${factIndex + 1} из ${facts.length}. Листайте карточку влево или вправо" style="--fact-text:${cardArt.text}">
+          <article class="fact-card" id="factCard" tabindex="0" aria-label="Факт ${factIndex + 1} из ${facts.length}. Листайте карточку влево или вправо" style="--fact-text:${cardArt.text}">
             <img class="fact-card-art" src="${cardArt.src}" alt="">
             <div class="fact-content">
               <h2>${fact.title}</h2>
@@ -835,13 +837,26 @@
       let lastTime = 0;
       let velocity = 0;
 
-      card.addEventListener('animationend', () => card.classList.remove('fact-enter-up'), { once: true });
-
       const flyAway = delta => {
         if (locked) return;
         locked = true;
         dragging = false;
         card.classList.remove('dragging');
+        const stage = document.getElementById('factStage');
+        const firstShadow = stage?.querySelector('.fact-shadow-card.one');
+        const secondShadow = stage?.querySelector('.fact-shadow-card.two');
+        if (delta < 0 && firstShadow && secondShadow) {
+          const previousIndex = (factIndex - 1 + facts.length) % facts.length;
+          const beforePreviousIndex = (factIndex - 2 + facts.length) % facts.length;
+          const previousFact = facts[previousIndex];
+          const previousArt = factCards[previousIndex % factCards.length];
+          firstShadow.style.setProperty('--fact-text', previousArt.text);
+          firstShadow.querySelector('.fact-card-art').src = previousArt.src;
+          firstShadow.querySelector('h2').textContent = previousFact.title;
+          firstShadow.querySelector('p').textContent = previousFact.body;
+          secondShadow.src = factCards[beforePreviousIndex % factCards.length].src;
+        }
+        stage?.classList.add('advancing');
         card.style.transform = `translate3d(${delta > 0 ? '-125%' : '125%'}, -4px, 0) rotate(${delta > 0 ? '-10deg' : '10deg'})`;
         card.style.opacity = '0';
         setTimeout(() => changeFact(delta), 390);
@@ -856,7 +871,6 @@
 
       card.addEventListener('pointerdown', e => {
         if (locked) return;
-        card.classList.remove('fact-enter-up');
         dragging = true;
         startX = currentX = lastX = e.clientX;
         lastTime = e.timeStamp;
@@ -892,7 +906,6 @@
     }
 
     function changeFact(delta) {
-      factEnterDirection = delta;
       factIndex = (factIndex + delta + facts.length) % facts.length;
       renderFacts();
     }
