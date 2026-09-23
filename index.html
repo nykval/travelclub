@@ -1,0 +1,1130 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#edefff" />
+  <title>Tutu Travel Club</title>
+  <style>
+    @font-face {
+      font-family: "Tutu Sans";
+      src: url("assets/fonts/tutu_sans_regular.woff2") format("woff2");
+      font-style: normal;
+      font-weight: 400;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: "Tutu Sans";
+      src: url("assets/fonts/tutu_sans_medium.woff2") format("woff2");
+      font-style: normal;
+      font-weight: 500;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: "Tutu Sans";
+      src: url("assets/fonts/tutu_sans_demibold.woff2") format("woff2");
+      font-style: normal;
+      font-weight: 600;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: "Tutu Sans";
+      src: url("assets/fonts/tutu_sans_bold.woff2") format("woff2");
+      font-style: normal;
+      font-weight: 700;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: "Tutu Sans";
+      src: url("assets/fonts/tutu_sans_extrabold.woff2") format("woff2");
+      font-style: normal;
+      font-weight: 800;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: "Tutu Sans";
+      src: url("assets/fonts/tutu_sans_black.woff2") format("woff2");
+      font-style: normal;
+      font-weight: 900;
+      font-display: swap;
+    }
+
+    :root {
+      --purple: #a181ff;
+      --purple-strong: #7354ed;
+      --purple-deep: #4f31bb;
+      --orange: #fe6d22;
+      --ink: #170c37;
+      --blue: #0d0b68;
+      --muted: rgba(23, 12, 55, .6);
+      --line: rgba(13, 11, 104, .1);
+      --bg: #edefff;
+      --white: #fff;
+      --green: #00a950;
+      --red: #d94a4a;
+      --yellow: #ffbf24;
+      --shadow: 0 18px 45px rgba(35, 20, 83, .13);
+    }
+
+    * { box-sizing: border-box; }
+    html { background: #f5f3ff; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      overflow: hidden;
+      color: var(--ink);
+      font-family: "Tutu Sans", Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      background:
+        radial-gradient(circle at 12% 18%, rgba(161,129,255,.35), transparent 27%),
+        radial-gradient(circle at 87% 78%, rgba(254,109,34,.18), transparent 24%),
+        #f8f7fc;
+    }
+    button { font: inherit; }
+    button, [role="button"] { -webkit-tap-highlight-color: transparent; }
+
+    .app {
+      width: min(100%, 460px);
+      height: 100dvh;
+      min-height: 0;
+      margin: 0 auto;
+      position: relative;
+      overflow: hidden;
+      background: #f8f8fc;
+    }
+
+    .topbar {
+      position: static;
+      z-index: 40;
+      height: 76px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 18px 8px;
+      background: linear-gradient(180deg, rgba(248,248,252,.98) 72%, rgba(248,248,252,0));
+      pointer-events: none;
+    }
+    .topbar > * { pointer-events: auto; }
+
+    .topbar.reward-header {
+      position: sticky;
+      top: 0;
+      background: transparent;
+      transition: background .24s ease, box-shadow .24s ease;
+    }
+    .topbar.reward-header.compact {
+      background: rgba(255,255,255,.96);
+      box-shadow: 0 1px 0 rgba(13,11,104,.08);
+      backdrop-filter: blur(14px);
+    }
+    .compact-title {
+      position: absolute;
+      left: 74px;
+      right: 104px;
+      overflow: hidden;
+      color: var(--ink);
+      font-size: 17px;
+      font-weight: 900;
+      text-align: center;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      opacity: 0;
+      transform: translateY(5px);
+      pointer-events: none;
+      transition: opacity .2s ease, transform .2s ease;
+    }
+    .topbar.reward-header.compact .compact-title { opacity: 1; transform: translateY(0); }
+    .topbar.reward-header .balance {
+      opacity: 0;
+      transform: translateY(7px) scale(.92);
+      pointer-events: none;
+      transition: opacity .2s ease, transform .24s cubic-bezier(.2,.8,.2,1);
+    }
+    .topbar.reward-header.compact .balance {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      pointer-events: auto;
+    }
+
+    .app-close {
+      width: 40px;
+      height: 40px;
+      display: grid;
+      place-items: center;
+      border: 0;
+      padding: 0;
+      background: transparent;
+      cursor: pointer;
+    }
+    .app-close img {
+      width: 21px;
+      height: 21px;
+      display: block;
+    }
+
+    .balance {
+      min-height: 42px;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 0 13px;
+      border: 1px solid rgba(115,84,237,.12);
+      border-radius: 22px;
+      background: rgba(255,255,255,.9);
+      box-shadow: 0 8px 24px rgba(35,20,83,.08);
+      color: var(--ink);
+      font-size: 16px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+    .star {
+      width: 18px;
+      height: 18px;
+      display: inline-block;
+      flex: 0 0 auto;
+      vertical-align: -4px;
+      background: url("assets/star.png") center / 27px 27px no-repeat;
+      font-size: 0;
+    }
+    .tag .star, .task-reward .star, .reward-cost .star { width: 16px; height: 16px; background-size: 24px 24px; vertical-align: -3px; }
+
+    .view {
+      height: 100%;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      padding: 0;
+      scrollbar-width: none;
+    }
+    .view::-webkit-scrollbar { display: none; }
+    .view.quiz-view { background: var(--bg); }
+    .view.fact-view { overflow: hidden; }
+    .view.reward-view { background: linear-gradient(135deg, #ff8b35 0%, #ffc94a 48%, #ffe176 100%); }
+    .page-content { padding: 4px 16px 110px; }
+    .page-content.quiz-page { min-height: calc(100% - 76px); padding: 0; }
+    .page-content.facts-page {
+      height: calc(100% - 76px);
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      padding: 8px 16px 94px;
+    }
+    .page-content.rewards-page { min-height: calc(100% - 76px); padding: 0 0 110px; }
+
+    .bottom-nav {
+      position: absolute;
+      z-index: 30;
+      left: 10px;
+      right: 10px;
+      bottom: max(10px, env(safe-area-inset-bottom));
+      height: 70px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      padding: 6px;
+      border: 1px solid rgba(255,255,255,.82);
+      border-radius: 25px;
+      background: rgba(255,255,255,.9);
+      box-shadow: 0 14px 40px rgba(35,20,83,.16);
+      backdrop-filter: blur(18px);
+    }
+    .bottom-nav::before {
+      content: "";
+      position: absolute;
+      z-index: 0;
+      top: 6px;
+      bottom: 6px;
+      left: 6px;
+      width: calc((100% - 12px) / 4);
+      border-radius: 18px;
+      background: rgba(161,129,255,.15);
+      transform: translateX(0);
+      transition: transform .3s cubic-bezier(.2,.8,.2,1);
+      pointer-events: none;
+    }
+    .bottom-nav[data-active="1"]::before { transform: translateX(100%); }
+    .bottom-nav[data-active="2"]::before { transform: translateX(200%); }
+    .bottom-nav[data-active="3"]::before { transform: translateX(300%); }
+    .bottom-nav.hidden { display: none; }
+
+    .nav-item {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      border: 0;
+      border-radius: 18px;
+      background: transparent;
+      color: rgba(23,12,55,.5);
+      font-size: 10px;
+      font-weight: 760;
+      cursor: pointer;
+    }
+    .nav-item.active { color: var(--purple-strong); background: transparent; }
+    .nav-icon {
+      width: 30px;
+      height: 30px;
+      display: grid;
+      place-items: center;
+      line-height: 1;
+    }
+    .nav-icon img {
+      width: 34px;
+      height: 34px;
+      max-width: none;
+      display: block;
+      object-fit: contain;
+      opacity: .62;
+      transition: opacity .18s ease, transform .18s ease;
+    }
+    .nav-item.active .nav-icon img {
+      opacity: 1;
+      transform: scale(1.08);
+      animation: nav-icon-pop .3s cubic-bezier(.2,.9,.25,1.25);
+    }
+    @keyframes nav-icon-pop {
+      0% { transform: translateY(3px) scale(.92); }
+      70% { transform: translateY(-2px) scale(1.12); }
+      100% { transform: translateY(0) scale(1.08); }
+    }
+
+    h1, h2, h3, p { margin-top: 0; }
+    .page-title {
+      margin: 2px 0 7px;
+      max-width: 390px;
+      font-size: 32px;
+      line-height: 1.02;
+      letter-spacing: -.045em;
+      font-weight: 900;
+    }
+    .page-subtitle { margin: 0 0 20px; color: var(--muted); font-size: 15px; line-height: 1.4; }
+    .section-title-row { display: flex; align-items: center; justify-content: space-between; margin: 26px 2px 13px; }
+    .section-title-row h2 { margin: 0; font-size: 21px; letter-spacing: -.03em; }
+    .text-button { border: 0; padding: 7px 10px; background: transparent; color: var(--purple-strong); font-size: 13px; font-weight: 800; cursor: pointer; }
+
+    .hero {
+      min-height: 380px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 18px;
+      border-radius: 32px;
+      background:
+        linear-gradient(180deg, rgba(23,12,55,.02) 22%, rgba(23,12,55,.82) 100%),
+        url("assets/tutu-quiz-journey.png") center 64% / cover;
+      box-shadow: var(--shadow);
+      color: white;
+    }
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.22);
+      pointer-events: none;
+    }
+    .hero-top {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      right: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 30px;
+      padding: 0 11px;
+      border-radius: 15px;
+      background: rgba(255,255,255,.9);
+      color: var(--blue);
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+    .tag.orange { background: var(--orange); color: white; }
+    .hero h2 { position: relative; margin: 0 0 8px; max-width: 350px; font-size: 30px; line-height: 1.02; letter-spacing: -.04em; }
+    .hero p { position: relative; margin: 0 0 16px; max-width: 330px; color: rgba(255,255,255,.82); font-size: 14px; line-height: 1.35; }
+
+    .primary, .secondary {
+      min-height: 54px;
+      border: 0;
+      border-radius: 19px;
+      padding: 12px 17px;
+      font-size: 16px;
+      font-weight: 850;
+      cursor: pointer;
+      transition: transform .12s ease, opacity .2s ease;
+    }
+    .primary { background: linear-gradient(135deg, var(--purple-strong), #8b5cff); color: white; box-shadow: 0 10px 25px rgba(115,84,237,.28); }
+    .primary.orange { background: var(--orange); box-shadow: 0 10px 25px rgba(254,109,34,.25); }
+    .secondary { background: rgba(161,129,255,.13); color: var(--purple-deep); }
+    .primary:active, .secondary:active, .card-button:active { transform: scale(.985); }
+    .primary:disabled { background: #e2e0e9; color: #95919e; box-shadow: none; cursor: default; }
+    .wide { width: 100%; }
+
+    .quick-grid { display: grid; grid-template-columns: 1fr; gap: 2px; }
+    .quick-card {
+      width: 100%;
+      aspect-ratio: 1734 / 907;
+      display: block;
+      padding: 0;
+      border: 0;
+      border-radius: 22px;
+      background: transparent;
+      cursor: pointer;
+      overflow: hidden;
+      transition: transform .18s ease, filter .18s ease;
+    }
+    .quick-card img { width: 100%; height: 100%; display: block; object-fit: contain; pointer-events: none; }
+    .quick-card:active { transform: scale(.985); filter: brightness(.98); }
+
+
+    .reward-visual {
+      display: grid;
+      place-items: center;
+      border-radius: 19px;
+      background: linear-gradient(145deg, #f5f0ff, #e5ddff);
+    }
+
+    .facts-page .fact-stage { width: 100%; height: min(525px, 100%); min-height: 0; margin: 0 3px; }
+    .fact-stage { position: relative; min-height: 525px; margin: 20px 3px 18px; }
+    .fact-shadow-card, .fact-card {
+      position: absolute;
+      left: 50%;
+      right: auto;
+      width: min(76vw, 327px, calc((100dvh - 180px) * .6667));
+      height: auto;
+      max-height: 100%;
+      aspect-ratio: 2 / 3;
+      translate: -50% 0;
+      border-radius: 25px;
+      transition: transform .38s cubic-bezier(.22,.76,.2,1), opacity .28s ease;
+    }
+    .fact-shadow-card.one { top: 11px; transform: rotate(-2.5deg) scale(.968); }
+    .fact-shadow-card.two { top: 20px; transform: rotate(2.8deg) scale(.94); }
+    .fact-shadow-card { object-fit: contain; box-shadow: 0 14px 32px rgba(35,20,83,.08); }
+    .fact-card {
+      z-index: 3;
+      top: 0;
+      overflow: hidden;
+      background: transparent;
+      box-shadow: var(--shadow);
+      touch-action: pan-y;
+      cursor: grab;
+      user-select: none;
+      will-change: transform, opacity;
+    }
+    .fact-card:focus-visible { outline: 3px solid white; outline-offset: -6px; }
+    .fact-card.dragging { transition: none; cursor: grabbing; }
+    .fact-card.fact-enter-up { animation: factInUp .54s cubic-bezier(.16,1,.3,1) backwards; }
+    @keyframes factInUp {
+      0% { opacity: .42; transform: translate3d(0, 18%, 0) scale(.93); }
+      68% { opacity: 1; transform: translate3d(0, -1.4%, 0) scale(1.008); }
+      100% { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+    }
+    .fact-card-art {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: fill;
+      pointer-events: none;
+    }
+    .fact-content {
+      position: absolute;
+      z-index: 1;
+      left: 9.5%;
+      right: 9.5%;
+      top: 48%;
+      bottom: 6.5%;
+      display: flex;
+      flex-direction: column;
+      color: var(--fact-text);
+      pointer-events: none;
+    }
+    .fact-content h2 { margin: 0 0 8px; font-size: clamp(18px, 5.2vw, 22px); line-height: 1.03; letter-spacing: -.035em; }
+    .fact-content p { margin: 0; font-size: clamp(11px, 3.15vw, 13px); line-height: 1.34; opacity: .78; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .fact-card, .fact-shadow-card { transition-duration: .01ms; animation-duration: .01ms !important; }
+    }
+
+    .rewards-hero {
+      min-height: 270px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 22px 38px;
+      color: white;
+      text-align: center;
+    }
+    .rewards-balance {
+      min-height: 88px;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 26px;
+      border-radius: 32px;
+      background: white;
+      color: #17141d;
+      font-size: 44px;
+      font-weight: 950;
+      line-height: 1;
+      box-shadow: 0 16px 40px rgba(102,60,0,.12);
+    }
+    .rewards-balance .star { width: 43px; height: 43px; background-size: 62px 62px; }
+    .rewards-hero p { margin: 22px 0 0; font-size: 21px; font-weight: 800; line-height: 1.25; }
+    .rewards-sheet {
+      min-height: 620px;
+      padding: 24px 16px 34px;
+      border-radius: 34px 34px 0 0;
+      background: #fff;
+      box-shadow: 0 -9px 34px rgba(101,60,0,.08);
+    }
+    .rewards-sheet-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 17px; }
+    .rewards-sheet-head h1 { margin: 0; font-size: 30px; line-height: 1; letter-spacing: -.04em; }
+    .rewards-sheet-note { color: var(--muted); font-size: 12px; font-weight: 800; }
+
+    .tabs { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 6px; padding: 4px; margin-bottom: 14px; border-radius: 19px; background: #eceaf3; }
+    .tab { min-height: 43px; border: 0; border-radius: 16px; background: transparent; color: var(--muted); font-size: 14px; font-weight: 800; cursor: pointer; }
+    .tab.active { background: white; color: var(--purple-deep); box-shadow: 0 4px 16px rgba(35,20,83,.08); }
+
+    .task-list { display: grid; gap: 11px; }
+    .task-card {
+      display: grid;
+      grid-template-columns: 52px 1fr auto;
+      gap: 12px;
+      align-items: start;
+      padding: 15px;
+      border-radius: 25px;
+      background: #f8f8f8;
+      box-shadow: 0 1px 0 rgba(35,20,83,.04);
+    }
+    .task-card.done { opacity: .72; }
+    .task-icon { width: 52px; height: 52px; display: grid; place-items: center; border-radius: 18px; background: var(--icon-bg); font-size: 25px; }
+    .task-copy h3 { margin: 2px 0 5px; font-size: 15px; line-height: 1.2; }
+    .task-copy p { margin: 0 0 10px; color: var(--muted); font-size: 12px; line-height: 1.35; }
+    .progress { height: 7px; overflow: hidden; border-radius: 99px; background: #e9e7ef; }
+    .progress span { display: block; height: 100%; width: var(--progress); border-radius: inherit; background: linear-gradient(90deg, var(--purple), var(--purple-strong)); }
+    .task-meta { margin-top: 6px; display: flex; justify-content: space-between; color: rgba(23,12,55,.44); font-size: 11px; font-weight: 750; }
+    .task-reward { min-width: 58px; text-align: right; color: var(--green); font-size: 14px; font-weight: 900; }
+    .task-action { margin-top: 11px; min-height: 36px; padding: 0 12px; border: 0; border-radius: 13px; background: rgba(161,129,255,.15); color: var(--purple-deep); font-size: 12px; font-weight: 850; cursor: pointer; }
+    .task-action.claim { background: var(--purple-strong); color: white; }
+    .task-empty { padding: 45px 20px; text-align: center; color: var(--muted); }
+
+    .filter-row { display: flex; gap: 8px; overflow-x: auto; margin: 0 -16px 15px; padding: 0 16px 3px; scrollbar-width: none; }
+    .filter-row::-webkit-scrollbar { display: none; }
+    .chip { white-space: nowrap; min-height: 38px; padding: 0 14px; border: 1px solid rgba(13,11,104,.09); border-radius: 18px; background: white; color: var(--muted); font-size: 13px; font-weight: 800; cursor: pointer; }
+    .chip.active { background: var(--purple-strong); color: white; }
+    .reward-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 11px; }
+    .reward-card { min-width: 0; overflow: hidden; padding: 10px; border-radius: 25px; background: #f8f8f8; box-shadow: 0 1px 0 rgba(35,20,83,.04); }
+    .reward-card .reward-visual { height: 140px; font-size: 68px; background: var(--reward-bg); }
+    .reward-type { display: inline-flex; margin: 11px 0 7px; padding: 5px 8px; border-radius: 10px; background: var(--bg); color: var(--purple-deep); font-size: 9px; font-weight: 900; text-transform: uppercase; }
+    .reward-card h3 { min-height: 38px; margin: 0 0 5px; font-size: 15px; line-height: 1.17; }
+    .reward-card p { min-height: 30px; margin: 0 0 10px; color: var(--muted); font-size: 11px; line-height: 1.3; }
+    .reward-bottom { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+    .reward-cost { font-size: 16px; font-weight: 900; }
+    .card-button { min-height: 36px; padding: 0 11px; border: 0; border-radius: 13px; background: rgba(161,129,255,.17); color: var(--purple-deep); font-size: 11px; font-weight: 900; cursor: pointer; }
+    .card-button:disabled { color: #aaa7b2; background: #f0eff3; cursor: default; }
+
+    .quiz-shell { min-height: 100%; display: flex; flex-direction: column; padding: max(14px, env(safe-area-inset-top)) 16px 20px; background: linear-gradient(180deg, rgba(161,129,255,.23), rgba(237,239,255,0) 38%), var(--bg); }
+    .quiz-progress-head { display: flex; justify-content: space-between; margin: 15px 2px 8px; color: var(--muted); font-size: 12px; font-weight: 800; }
+    .segments { display: grid; grid-template-columns: repeat(10,1fr); gap: 5px; height: 6px; margin: 0 2px 20px; }
+    .segment { border-radius: 99px; background: rgba(13,11,104,.11); }
+    .segment.done { background: var(--purple); }
+    .segment.current { background: var(--orange); transform: scaleY(1.35); }
+    .quiz-content { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 13px; }
+    .quiz-label { align-self: flex-start; min-height: 30px; display: inline-flex; align-items: center; padding: 0 11px; border-radius: 15px; background: rgba(255,255,255,.8); color: var(--blue); font-size: 11px; font-weight: 900; text-transform: uppercase; }
+    .quiz-question { margin: 0; font-size: clamp(25px, 7vw, 31px); line-height: 1.04; letter-spacing: -.04em; }
+    .quiz-hint { margin: -5px 0 0; color: var(--muted); font-size: 13px; }
+    .quiz-photo { min-height: 210px; flex: .78; border-radius: 29px; background-position: center; background-size: cover; }
+    .answers { display: grid; gap: 10px; margin-top: auto; }
+    .answers.grid { grid-template-columns: 1fr 1fr; }
+    .answer { min-height: 67px; padding: 13px; border: 0; border-radius: 20px; background: white; color: var(--ink); font-weight: 800; cursor: pointer; box-shadow: 0 1px 0 rgba(13,11,104,.08); }
+    .answer.correct { background: var(--green); color: white; }
+    .answer.wrong { background: var(--red); color: white; }
+    .truth-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: auto; }
+    .truth-grid .answer { min-height: 112px; font-size: 18px; }
+    .order-list { display: grid; gap: 9px; }
+    .order-row { display: grid; grid-template-columns: 34px 1fr 67px; gap: 8px; align-items: center; min-height: 61px; padding: 8px 9px 8px 12px; border-radius: 20px; background: white; }
+    .order-num { width: 30px; height: 30px; display: grid; place-items: center; border-radius: 50%; background: var(--bg); color: var(--purple-deep); font-size: 12px; font-weight: 900; }
+    .order-name { font-size: 14px; font-weight: 800; }
+    .move { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
+    .move button { width: 29px; height: 35px; padding: 0; border: 0; border-radius: 11px; background: rgba(161,129,255,.17); color: var(--blue); cursor: pointer; }
+    .move button:disabled { opacity: .25; }
+    .feedback { margin-top: auto; padding: 16px; border-radius: 25px; background: white; box-shadow: var(--shadow); }
+    .feedback h3 { margin: 0 0 5px; font-size: 19px; }
+    .feedback p { margin: 0 0 13px; color: var(--muted); font-size: 13px; line-height: 1.4; }
+    .marketing { flex: 1; min-height: 0; display: flex; flex-direction: column; overflow: hidden; border-radius: 31px; background: white; box-shadow: var(--shadow); }
+    .marketing-art { flex: 1; min-height: 300px; position: relative; background: url("assets/tutu-quiz-journey.png") center 64% / cover; }
+    .marketing-art .tag { position: absolute; top: 15px; left: 15px; }
+    .marketing-copy { padding: 18px; }
+    .marketing-copy h2 { margin: 0 0 7px; font-size: 27px; line-height: 1.03; letter-spacing: -.04em; }
+    .marketing-copy p { margin: 0 0 15px; color: var(--muted); font-size: 13px; line-height: 1.4; }
+    .quiz-result { flex: 1; display: flex; flex-direction: column; text-align: center; }
+    .result-art { flex: 1; min-height: 280px; border-radius: 31px; background: url("assets/tutu-quiz-journey.png") center 67% / cover; }
+    .result-reward { align-self: center; margin: -40px 0 12px; padding: 16px 22px; border-radius: 25px; background: var(--orange); color: white; font-size: 31px; font-weight: 950; box-shadow: 0 14px 28px rgba(254,109,34,.25); }
+    .quiz-result h1 { margin: 0 0 7px; font-size: 29px; letter-spacing: -.04em; }
+    .quiz-result p { margin: 0 auto 17px; max-width: 320px; color: var(--muted); font-size: 14px; line-height: 1.4; }
+
+    .modal-wrap {
+      position: absolute;
+      z-index: 50;
+      inset: 0;
+      display: none;
+      align-items: flex-end;
+      padding: 12px;
+      background: rgba(23,12,55,.34);
+      backdrop-filter: blur(5px);
+    }
+    .modal-wrap.show { display: flex; }
+    .modal { width: 100%; padding: 19px; border-radius: 29px; background: white; box-shadow: 0 25px 70px rgba(23,12,55,.35); animation: rise .2s ease-out; }
+    @keyframes rise { from { opacity: 0; transform: translateY(20px); } }
+    .modal-visual { width: 76px; height: 76px; display: grid; place-items: center; margin-bottom: 13px; border-radius: 23px; background: var(--bg); font-size: 40px; }
+    .modal h2 { margin: 0 0 7px; font-size: 23px; letter-spacing: -.03em; }
+    .modal p { margin: 0 0 16px; color: var(--muted); font-size: 14px; line-height: 1.4; }
+    .modal-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+
+    .toast {
+      position: absolute;
+      z-index: 70;
+      left: 50%;
+      bottom: 94px;
+      max-width: calc(100% - 32px);
+      padding: 12px 16px;
+      border-radius: 17px;
+      background: var(--ink);
+      color: white;
+      font-size: 13px;
+      font-weight: 750;
+      opacity: 0;
+      transform: translate(-50%, 12px);
+      pointer-events: none;
+      transition: .2s ease;
+      white-space: nowrap;
+    }
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+    @media (min-width: 700px) {
+      body { display: grid; place-items: center; padding: 24px; }
+      .app { height: min(920px, calc(100dvh - 48px)); border: 8px solid #15121d; border-radius: 48px; box-shadow: 0 34px 90px rgba(23,12,55,.24); }
+    }
+  </style>
+</head>
+<body>
+  <main class="app" id="app">
+    <section class="view" id="view" aria-live="polite">
+      <header class="topbar" id="topbar"></header>
+      <div class="page-content" id="page"></div>
+    </section>
+    <nav class="bottom-nav" id="nav" aria-label="Главная навигация"></nav>
+    <div class="modal-wrap" id="modal"></div>
+    <div class="toast" id="toast"></div>
+  </main>
+
+  <script>
+    const STORAGE_KEY = 'tutu-travel-club-v2';
+    const today = new Date().toISOString().slice(0, 10);
+
+    const defaultState = {
+      stars: 24,
+      lastQuizDate: '',
+      lastQuizReward: 0,
+      seenFacts: [],
+      savedDirection: false,
+      streak: 2,
+      taskClaims: [],
+      purchases: []
+    };
+
+    let state = loadState();
+    let route = location.hash.replace('#', '') || 'home';
+    let taskTab = 'available';
+    let shopFilter = 'all';
+    let factIndex = 0;
+    let factEnterDirection = 0;
+    let quiz = null;
+    let pendingReward = null;
+    let toastTimer = null;
+
+    const facts = [
+      { id:'short-flight', title:'Самый короткий авиарейс длится около двух минут', body:'В Шотландии можно долететь с острова Уэстрей на Папа-Уэстрей примерно за 2 минуты. При хорошей погоде сам полёт занимает меньше минуты.' },
+      { id:'transsib-distance', title:'Поезд Москва — Владивосток проходит почти 9 300 км', body:'Путешествие по Транссибирской магистрали занимает около недели. За это время поезд пересекает почти всю Россию — от Москвы до побережья Японского моря.' },
+      { id:'antarctica-time', title:'В Антарктиде нет своего часового пояса', body:'На континенте нет единого официального времени. Научные станции обычно живут по времени своей страны или ближайшего логистического центра.' },
+      { id:'istanbul-continents', title:'В Стамбуле можно за день побывать в двух частях света', body:'Город расположен сразу в Европе и Азии. Чтобы сменить континент, достаточно пересечь Босфор — например, на обычном городском пароме.' },
+      { id:'iceland-trains', title:'В Исландии нет пассажирских поездов', body:'Между городами страны нельзя путешествовать на поезде: полноценной железнодорожной сети здесь нет. Поэтому главные способы передвижения — автомобиль, автобус и самолёт.' },
+      { id:'venice-islands', title:'Венеция стоит более чем на 100 островах', body:'Историческая часть города построена на множестве небольших островов, соединённых сотнями мостов. Поэтому вместо привычных улиц здесь часто встречаются каналы.' },
+      { id:'large-airports', title:'Некоторые аэропорты больше целых городов', body:'Территория крупных международных аэропортов может занимать десятки и даже сотни квадратных километров. Иногда от одного терминала до другого приходится ехать на поезде или автобусе.' },
+      { id:'walk-across-country', title:'Есть страны, которые можно пересечь пешком за один день', body:'Например, ширина Лихтенштейна составляет всего несколько километров. Поэтому за одну прогулку можно буквально пройти значительную часть страны.' },
+      { id:'three-countries', title:'На Земле есть место, где сходятся сразу три страны', body:'Такие точки называют трифиниями. Например, возле Базеля совсем рядом находятся границы Швейцарии, Франции и Германии.' },
+      { id:'modern-passport', title:'Паспорт появился в привычном виде совсем недавно', body:'Документы для путешественников существовали веками, но современные стандартизированные паспорта стали массово распространяться только в XX веке, когда международные поездки стали намного доступнее.' }
+    ];
+
+    const factCards = [
+      { src:'assets/fact-card-1.svg', text:'#0D0C68' },
+      { src:'assets/fact-card-train.svg', text:'#FFFFFF' },
+      { src:'assets/fact-card-antarctica.svg', text:'#FFFFFF' },
+      { src:'assets/fact-card-istanbul.svg', text:'#0D0C68' },
+      { src:'assets/fact-card-iceland.svg', text:'#FFFFFF' },
+      { src:'assets/fact-card-venice.svg', text:'#0D0C68' },
+      { src:'assets/fact-card-airport.svg', text:'#FFFFFF' },
+      { src:'assets/fact-card-liechtenstein.svg', text:'#FFFFFF' },
+      { src:'assets/fact-card-trifinium.svg', text:'#0D0C68' },
+      { src:'assets/fact-card-passport.svg', text:'#FFFFFF' }
+    ];
+
+    const rewards = [
+      { id:'hotel5', type:'Промокод', filter:'promo', icon:'🏨', title:'−5% на отель', desc:'На бронирование по России', cost:12, bg:'linear-gradient(145deg,#dcefff,#b8d8ff)' },
+      { id:'train500', type:'Промокод', filter:'promo', icon:'🚆', title:'Скидка 500 ₽ на поезд', desc:'На любое направление', cost:20, bg:'linear-gradient(145deg,#ffe4c7,#ffc58d)' },
+      { id:'window', type:'Бонус', filter:'travel', icon:'☁️', title:'Место у окна', desc:'Выбор места без доплаты', cost:8, bg:'linear-gradient(145deg,#d9f2ff,#c8d1ff)' },
+      { id:'draw', type:'Розыгрыш', filter:'draw', icon:'🎟️', title:'Билет в розыгрыш', desc:'Путешествие на двоих', cost:5, bg:'linear-gradient(145deg,#ffe5ef,#ffd0bd)' },
+      { id:'museum', type:'Поездка', filter:'travel', icon:'🏛️', title:'Билет в музей', desc:'Из подборки Туту', cost:15, bg:'linear-gradient(145deg,#eee3ff,#d7c8ff)' },
+      { id:'coffee', type:'Бонус', filter:'travel', icon:'☕', title:'Кофе в дорогу', desc:'У партнёров на вокзале', cost:6, bg:'linear-gradient(145deg,#fff0ce,#ffd8a1)' }
+    ];
+
+    const quizSteps = [
+      { type:'truth', label:'Правда или неправда', prompt:'Калининградская область отделена от основной территории России другими государствами', correct:'Правда', note:'Да. Между Калининградской областью и основной территорией России находятся другие страны.' },
+      { type:'choice', label:'Угадайте по фото', prompt:'В каком городе находится этот мост?', image:'assets/vladivostok-golden-bridge.png', options:['Владивосток','Мурманск','Сочи','Казань'], correct:'Владивосток', note:'Это Золотой мост через бухту Золотой Рог — одна из самых узнаваемых панорам Владивостока.' },
+      { type:'order', label:'Соберите маршрут', prompt:'Расставьте города с запада на восток', items:['Москва','Владивосток','Калининград','Екатеринбург'], correct:['Калининград','Москва','Екатеринбург','Владивосток'], note:'Получился маршрут через всю страну: Калининград → Москва → Екатеринбург → Владивосток.' },
+      { type:'truth', label:'Правда или неправда', prompt:'Эльбрус выше Монблана', correct:'Правда', note:'Эльбрус — 5 642 м, Монблан — около 4 806 м.' },
+      { type:'choice', label:'Выберите ответ', prompt:'В каком регионе находится остров Ольхон?', options:['Иркутская область','Республика Алтай','Карелия','Камчатский край'], correct:'Иркутская область', note:'Ольхон — крупнейший остров Байкала. Он относится к Иркутской области.' },
+      { type:'order', label:'С севера на юг', prompt:'Расставьте города от самого северного к самому южному', items:['Москва','Сочи','Мурманск','Санкт-Петербург'], correct:['Мурманск','Санкт-Петербург','Москва','Сочи'], note:'Север начинает Мурманск, а самая южная точка этого маршрута — Сочи.' },
+      { type:'marketing' },
+      { type:'truth', label:'Правда или неправда', prompt:'Транссибирская магистраль соединяет Москву и Владивосток', correct:'Правда', note:'Да. Транссиб проходит через десятки городов и связывает Москву с Владивостоком.' },
+      { type:'order', label:'По возрасту', prompt:'Расставьте города от самого старого к самому молодому', items:['Москва','Санкт-Петербург','Казань','Великий Новгород'], correct:['Великий Новгород','Казань','Москва','Санкт-Петербург'], note:'По официальным датам основания: 859 → 1005 → 1147 → 1703.' },
+      { type:'choice', label:'Финишный вопрос', prompt:'Какое море омывает побережье Сочи?', options:['Чёрное','Каспийское','Балтийское','Азовское'], correct:'Чёрное', note:'Сочи расположен на северо-восточном побережье Чёрного моря.' }
+    ];
+
+    const navItems = [
+      { route:'home', icon:'assets/nav-home.png', label:'Главная' },
+      { route:'facts', icon:'assets/nav-facts.png', label:'Факты' },
+      { route:'tasks', icon:'assets/nav-tasks.png', label:'Задания' },
+      { route:'shop', icon:'assets/nav-prizes.png', label:'Призы' }
+    ];
+
+    const app = document.getElementById('app');
+    const view = document.getElementById('view');
+    const page = document.getElementById('page');
+    const topbar = document.getElementById('topbar');
+    const nav = document.getElementById('nav');
+    const modal = document.getElementById('modal');
+    const toast = document.getElementById('toast');
+
+    function loadState() {
+      try { return { ...defaultState, ...JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}') }; }
+      catch { return { ...defaultState }; }
+    }
+    function saveState() { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+    function esc(value) { return String(value).replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c])); }
+    function starIcon() { return '<span class="star" aria-hidden="true"></span>'; }
+    function quizDoneToday() { return state.lastQuizDate === today; }
+
+    function go(nextRoute) {
+      if (nextRoute === 'quiz') return startQuiz();
+      route = nextRoute;
+      location.hash = nextRoute;
+      view.scrollTop = 0;
+      render();
+    }
+
+    function renderChrome() {
+      const hide = route === 'quiz';
+      const rewardMode = route === 'tasks' || route === 'shop';
+      const compactTitle = route === 'tasks' ? 'Задания' : route === 'shop' ? 'Магазин призов' : '';
+      topbar.style.display = 'flex';
+      nav.classList.toggle('hidden', hide);
+      view.classList.toggle('quiz-view', hide);
+      view.classList.toggle('fact-view', route === 'facts');
+      view.classList.toggle('reward-view', rewardMode);
+      page.classList.toggle('quiz-page', hide);
+      page.classList.toggle('facts-page', route === 'facts');
+      page.classList.toggle('rewards-page', rewardMode);
+      topbar.classList.toggle('reward-header', rewardMode);
+      topbar.classList.remove('compact');
+      topbar.innerHTML = `<button class="app-close" data-go="home" aria-label="Закрыть"><img src="assets/app-close.svg" alt=""></button><div class="compact-title">${compactTitle}</div><button class="balance" data-go="shop" aria-label="Баланс звёзд">${starIcon()}<span id="balanceValue">${state.stars}</span></button>`;
+      if (!hide) {
+        nav.dataset.active = String(Math.max(0, navItems.findIndex(item => item.route === route)));
+        nav.innerHTML = navItems.map(item => `<button class="nav-item ${route === item.route ? 'active' : ''}" data-go="${item.route}"><span class="nav-icon"><img src="${item.icon}" alt=""></span><span>${item.label}</span></button>`).join('');
+      }
+      syncRewardHeader();
+    }
+
+    function syncRewardHeader() {
+      const rewardMode = route === 'tasks' || route === 'shop';
+      topbar.classList.toggle('compact', rewardMode && view.scrollTop > 170);
+    }
+
+    function render() {
+      renderChrome();
+      if (route === 'home') renderHome();
+      else if (route === 'facts') renderFacts();
+      else if (route === 'tasks') renderTasks();
+      else if (route === 'shop') renderShop();
+      else if (route === 'quiz') renderQuiz();
+      else go('home');
+    }
+
+    function renderHome() {
+      const done = quizDoneToday();
+      const factsRead = state.seenFacts.length;
+      const doneTasks = completedTaskCount();
+      page.innerHTML = `
+        <h1 class="page-title">Куда отправимся сегодня?</h1>
+        <p class="page-subtitle">Новый повод узнать мир — каждый день.</p>
+        <article class="hero">
+          <div class="hero-top"><span class="tag">Квиз дня</span><span class="tag orange">${done ? `Получено ${state.lastQuizReward} ${starIcon()}` : `До 10 ${starIcon()}`}</span></div>
+          <h2>Россия: от Калининграда до Камчатки</h2>
+          <p>${done ? 'Сегодняшняя награда уже ваша. Можно пройти ещё раз без начисления звёзд.' : 'Девять вопросов, три механики и одна идея для следующего путешествия.'}</p>
+          <button class="primary wide" data-action="start-quiz">${done ? 'Пройти ещё раз' : 'Играть'} →</button>
+        </article>
+
+        <div class="section-title-row"><h2>Исследовать</h2></div>
+        <div class="quick-grid">
+          <button class="quick-card" data-go="facts" aria-label="Открыть факт дня"><img src="assets/ChatGPT Image 23 сент. 2026 г., 22_32_28.png" alt=""></button>
+          <button class="quick-card" data-go="tasks" aria-label="Открыть задания"><img src="assets/ChatGPT Image 23 сент. 2026 г., 22_33_15.png" alt=""></button>
+        </div>`;
+    }
+
+    function markFactSeen() {
+      const id = facts[factIndex].id;
+      if (!state.seenFacts.includes(id)) {
+        state.seenFacts.push(id);
+        saveState();
+      }
+    }
+
+    function renderFacts() {
+      markFactSeen();
+      const fact = facts[factIndex];
+      const cardArt = factCards[factIndex % factCards.length];
+      const nextCardArt = factCards[(factIndex + 1) % factCards.length];
+      const afterNextCardArt = factCards[(factIndex + 2) % factCards.length];
+      const enterClass = factEnterDirection ? 'fact-enter-up' : '';
+      factEnterDirection = 0;
+      page.innerHTML = `
+        <div class="fact-stage" id="factStage">
+          <img class="fact-shadow-card one" src="${nextCardArt.src}" alt="" aria-hidden="true">
+          <img class="fact-shadow-card two" src="${afterNextCardArt.src}" alt="" aria-hidden="true">
+          <article class="fact-card ${enterClass}" id="factCard" tabindex="0" aria-label="Факт ${factIndex + 1} из ${facts.length}. Листайте карточку влево или вправо" style="--fact-text:${cardArt.text}">
+            <img class="fact-card-art" src="${cardArt.src}" alt="">
+            <div class="fact-content">
+              <h2>${fact.title}</h2>
+              <p>${fact.body}</p>
+            </div>
+          </article>
+        </div>`;
+      enableFactSwipe();
+    }
+
+    function enableFactSwipe() {
+      const card = document.getElementById('factCard');
+      if (!card) return;
+      let dragging = false;
+      let locked = false;
+      let startX = 0;
+      let currentX = 0;
+      let lastX = 0;
+      let lastTime = 0;
+      let velocity = 0;
+
+      card.addEventListener('animationend', () => card.classList.remove('fact-enter-up'), { once: true });
+
+      const flyAway = delta => {
+        if (locked) return;
+        locked = true;
+        dragging = false;
+        card.classList.remove('dragging');
+        card.style.transform = `translate3d(${delta > 0 ? '-125%' : '125%'}, -4px, 0) rotate(${delta > 0 ? '-10deg' : '10deg'})`;
+        card.style.opacity = '0';
+        setTimeout(() => changeFact(delta), 390);
+      };
+
+      const settle = () => {
+        dragging = false;
+        card.classList.remove('dragging');
+        card.style.transform = '';
+        card.style.opacity = '';
+      };
+
+      card.addEventListener('pointerdown', e => {
+        if (locked) return;
+        card.classList.remove('fact-enter-up');
+        dragging = true;
+        startX = currentX = lastX = e.clientX;
+        lastTime = e.timeStamp;
+        velocity = 0;
+        card.classList.add('dragging');
+        card.setPointerCapture(e.pointerId);
+      });
+      card.addEventListener('pointermove', e => {
+        if (!dragging || locked) return;
+        currentX = e.clientX;
+        const dx = currentX - startX;
+        const elapsed = Math.max(1, e.timeStamp - lastTime);
+        velocity = (currentX - lastX) / elapsed;
+        lastX = currentX;
+        lastTime = e.timeStamp;
+        const softened = Math.sign(dx) * Math.pow(Math.abs(dx), .94);
+        card.style.transform = `translate3d(${softened}px, 0, 0) rotate(${dx * .032}deg)`;
+        card.style.opacity = String(1 - Math.min(Math.abs(dx) / 700, .2));
+      });
+      card.addEventListener('pointerup', e => {
+        if (!dragging || locked) return;
+        currentX = e.clientX;
+        const dx = currentX - startX;
+        const shouldChange = Math.abs(dx) > 72 || (Math.abs(dx) > 24 && Math.abs(velocity) > .48);
+        if (shouldChange) flyAway(dx < 0 ? 1 : -1);
+        else settle();
+      });
+      card.addEventListener('pointercancel', settle);
+      card.addEventListener('keydown', e => {
+        if (e.key === 'ArrowLeft') { e.preventDefault(); flyAway(1); }
+        if (e.key === 'ArrowRight') { e.preventDefault(); flyAway(-1); }
+      });
+    }
+
+    function changeFact(delta) {
+      factEnterDirection = delta;
+      factIndex = (factIndex + delta + facts.length) % facts.length;
+      renderFacts();
+    }
+
+    function taskData() {
+      return [
+        { id:'quiz', icon:'🎓', title:'Пройти квиз дня', desc:'Ответьте на вопросы и получите от 1 до 10 звёзд', progress:quizDoneToday()?1:0, total:1, reward:state.lastQuizReward || 10, status:quizDoneToday()?'received':'action', action:'start-quiz', actionLabel:'Играть', color:'#ede3ff' },
+        { id:'facts5', icon:'📖', title:'Прочитать 5 фактов', desc:'Узнайте больше о мире вокруг', progress:Math.min(state.seenFacts.length,5), total:5, reward:3, status:taskStatus('facts5', state.seenFacts.length >= 5), action:'go-facts', actionLabel:'Читать', color:'#e7e0ff' },
+        { id:'save', icon:'💜', title:'Сохранить направление', desc:'Добавьте идею поездки в избранное', progress:state.savedDirection?1:0, total:1, reward:2, status:taskStatus('save', state.savedDirection), action:'save-direction', actionLabel:'Сохранить', color:'#ffe1e8' },
+        { id:'streak', icon:'📅', title:'Заглянуть 3 дня подряд', desc:'Заходите в клуб каждый день', progress:Math.min(state.streak,3), total:3, reward:5, status:taskStatus('streak', state.streak>=3), action:'none', actionLabel:'Ещё день', color:'#e1ddff' }
+      ];
+    }
+
+    function taskStatus(id, complete) {
+      if (state.taskClaims.includes(id)) return 'received';
+      return complete ? 'claim' : 'action';
+    }
+    function completedTaskCount() { return taskData().filter(item => item.progress >= item.total).length; }
+
+    function renderTasks() {
+      const all = taskData();
+      const tasks = all.filter(item => taskTab === 'completed' ? item.status === 'received' : item.status !== 'received');
+      page.innerHTML = `
+        <section class="rewards-hero">
+          <div class="rewards-balance">${starIcon()}<span>${state.stars}</span></div>
+          <p>Выполняйте задания<br>и получайте звёзды</p>
+        </section>
+        <section class="rewards-sheet">
+          <div class="rewards-sheet-head"><h1>Задания</h1><span class="rewards-sheet-note">Новые каждый день</span></div>
+          <div class="tabs"><button class="tab ${taskTab==='available'?'active':''}" data-task-tab="available">Доступные</button><button class="tab ${taskTab==='completed'?'active':''}" data-task-tab="completed">Выполненные</button></div>
+          <div class="task-list">${tasks.length ? tasks.map(renderTask).join('') : '<div class="task-empty">Здесь появятся выполненные задания ✨</div>'}</div>
+        </section>`;
+    }
+
+    function renderTask(item) {
+      const percent = Math.round(item.progress / item.total * 100);
+      const action = item.status === 'claim'
+        ? `<button class="task-action claim" data-claim-task="${item.id}">Забрать</button>`
+        : item.status === 'received'
+          ? `<button class="task-action" disabled>Получено ✓</button>`
+          : item.action === 'none' ? '' : `<button class="task-action" data-task-action="${item.action}">${item.actionLabel}</button>`;
+      return `<article class="task-card ${item.status==='received'?'done':''}">
+        <div class="task-icon" style="--icon-bg:${item.color}">${item.icon}</div>
+        <div class="task-copy"><h3>${item.title}</h3><p>${item.desc}</p><div class="progress" style="--progress:${percent}%"><span></span></div><div class="task-meta"><span>${item.progress} из ${item.total}</span><span>${percent}%</span></div>${action}</div>
+        <div class="task-reward">+${item.reward} ${starIcon()}</div></article>`;
+    }
+
+    function renderShop() {
+      const items = rewards.filter(item => shopFilter === 'all' || item.filter === shopFilter);
+      page.innerHTML = `
+        <section class="rewards-hero">
+          <div class="rewards-balance">${starIcon()}<span>${state.stars}</span></div>
+          <p>Копите звёзды<br>и обменивайте на призы!</p>
+        </section>
+        <section class="rewards-sheet">
+          <div class="rewards-sheet-head"><h1>Магазин призов</h1><span class="rewards-sheet-note">Для путешествий</span></div>
+          <div class="filter-row">${[['all','Все'],['promo','Промокоды'],['travel','Поездки'],['draw','Розыгрыши']].map(([id,label]) => `<button class="chip ${shopFilter===id?'active':''}" data-shop-filter="${id}">${label}</button>`).join('')}</div>
+          <div class="reward-grid">${items.map(renderReward).join('')}</div>
+        </section>`;
+    }
+
+    function renderReward(item) {
+      const bought = state.purchases.includes(item.id);
+      const enough = state.stars >= item.cost;
+      return `<article class="reward-card"><div class="reward-visual" style="--reward-bg:${item.bg}">${item.icon}</div><span class="reward-type">${item.type}</span><h3>${item.title}</h3><p>${item.desc}</p><div class="reward-bottom"><span class="reward-cost">${item.cost} ${starIcon()}</span><button class="card-button" data-buy="${item.id}" ${bought?'disabled':''}>${bought?'Куплено':enough?'Получить':'Не хватает'}</button></div></article>`;
+    }
+
+    function openRewardModal(id) {
+      const item = rewards.find(x => x.id === id);
+      if (!item || state.purchases.includes(id)) return;
+      if (state.stars < item.cost) return showToast(`Нужно ещё ${item.cost - state.stars} ★`);
+      pendingReward = item;
+      modal.innerHTML = `<div class="modal"><div class="modal-visual">${item.icon}</div><h2>${item.title}</h2><p>Обменять ${item.cost} звёзд? В прототипе приз сразу появится в разделе покупок.</p><div class="modal-actions"><button class="secondary" data-modal-close>Не сейчас</button><button class="primary" data-modal-confirm>Получить за ${item.cost} ${starIcon()}</button></div></div>`;
+      modal.classList.add('show');
+    }
+
+    function confirmReward() {
+      if (!pendingReward || state.stars < pendingReward.cost) return;
+      state.stars -= pendingReward.cost;
+      state.purchases.push(pendingReward.id);
+      saveState();
+      modal.classList.remove('show');
+      showToast('Приз добавлен в ваши награды ✓');
+      pendingReward = null;
+      render();
+    }
+
+    function claimTask(id) {
+      const item = taskData().find(x => x.id === id);
+      if (!item || item.status !== 'claim') return;
+      state.stars += item.reward;
+      state.taskClaims.push(id);
+      saveState();
+      showToast(`Получено +${item.reward} ★`);
+      render();
+    }
+
+    function startQuiz() {
+      route = 'quiz';
+      location.hash = 'quiz';
+      quiz = { index:0, score:0, locked:false, selected:'', correct:false, order:[], rewardAdded:false };
+      view.scrollTop = 0;
+      render();
+    }
+
+    function renderQuiz() {
+      if (!quiz) quiz = { index:0, score:0, locked:false, selected:'', correct:false, order:[], rewardAdded:false };
+      renderChrome();
+      const step = quizSteps[quiz.index];
+      if (!step) return renderQuizResult();
+      const segs = quizSteps.map((_,i) => `<span class="segment ${i<quiz.index?'done':''} ${i===quiz.index?'current':''}"></span>`).join('');
+      page.innerHTML = `<div class="quiz-shell"><div class="quiz-progress-head"><span>Россия: от Калининграда до Камчатки</span><span>${quiz.index+1} из 10</span></div><div class="segments">${segs}</div><div class="quiz-content" id="quizContent">${renderQuizStep(step)}</div></div>`;
+    }
+
+    function quizHeader(step) { return `<span class="quiz-label">${esc(step.label)}</span><h1 class="quiz-question">${esc(step.prompt)}</h1>`; }
+
+    function renderQuizStep(step) {
+      if (step.type === 'marketing') return `<div class="marketing"><div class="marketing-art"><span class="tag orange">Идея для поездки</span></div><div class="marketing-copy"><h2>Увидеть Байкал своими глазами</h2><p>Сравните самолёты и поезда из Москвы в Иркутск — Туту соберёт варианты в одном поиске.</p><button class="primary orange wide" data-action="marketing-cta">Сравнить варианты</button><button class="secondary wide" style="margin-top:8px" data-action="quiz-next">Продолжить квиз</button></div></div>`;
+      if (quiz.locked) return renderLockedQuizStep(step);
+      if (step.type === 'truth') return `${quizHeader(step)}<p class="quiz-hint">Выберите один ответ</p><div class="truth-grid"><button class="answer" data-quiz-answer="Неправда">Неправда</button><button class="answer" data-quiz-answer="Правда">Правда</button></div>`;
+      if (step.type === 'choice') return `${quizHeader(step)}${step.image?`<div class="quiz-photo" style="background-image:url('${step.image}')"></div>`:''}<div class="answers grid">${step.options.map(x=>`<button class="answer" data-quiz-answer="${esc(x)}">${esc(x)}</button>`).join('')}</div>`;
+      if (step.type === 'order') {
+        if (!quiz.order.length) quiz.order = [...step.items];
+        return `${quizHeader(step)}<p class="quiz-hint">Передвигайте карточки стрелками</p><div class="order-list">${quiz.order.map((x,i)=>`<div class="order-row"><span class="order-num">${i+1}</span><span class="order-name">${x}</span><span class="move"><button data-order-up="${i}" ${i===0?'disabled':''}>↑</button><button data-order-down="${i}" ${i===quiz.order.length-1?'disabled':''}>↓</button></span></div>`).join('')}</div><button class="primary orange wide" style="margin-top:auto" data-action="check-order">Проверить</button>`;
+      }
+      return '';
+    }
+
+    function renderLockedQuizStep(step) {
+      const base = step.type === 'order' ? `${quizHeader(step)}<div class="order-list">${quiz.order.map((x,i)=>`<div class="order-row"><span class="order-num">${i+1}</span><span class="order-name">${x}</span></div>`).join('')}</div>` : `${quizHeader(step)}${step.image?`<div class="quiz-photo" style="background-image:url('${step.image}')"></div>`:''}<div class="answers ${step.type==='truth'?'grid':''}">${(step.type==='truth'?['Неправда','Правда']:step.options).map(x=>`<button class="answer ${x===step.correct?'correct':x===quiz.selected?'wrong':''}" disabled>${x}</button>`).join('')}</div>`;
+      return `${base}<div class="feedback"><h3 style="color:${quiz.correct?'var(--green)':'var(--red)'}">${quiz.correct?`Верно! +1 ${starIcon()}`:'Почти получилось'}</h3><p>${quiz.correct?step.note:(step.type==='order'?`Правильный порядок: ${step.correct.join(' → ')}.`:step.note)}</p><button class="primary wide" data-action="quiz-next">${quiz.index===quizSteps.length-1?'Узнать результат':'Дальше'}</button></div>`;
+    }
+
+    function answerQuiz(value) {
+      if (quiz.locked) return;
+      const step = quizSteps[quiz.index];
+      quiz.selected = value;
+      quiz.correct = value === step.correct;
+      quiz.locked = true;
+      if (quiz.correct) quiz.score++;
+      renderQuiz();
+    }
+
+    function moveOrder(index, delta) {
+      const target = index + delta;
+      if (target < 0 || target >= quiz.order.length) return;
+      [quiz.order[index], quiz.order[target]] = [quiz.order[target], quiz.order[index]];
+      renderQuiz();
+    }
+
+    function checkOrder() {
+      if (quiz.locked) return;
+      const step = quizSteps[quiz.index];
+      quiz.correct = quiz.order.every((x,i)=>x===step.correct[i]);
+      quiz.locked = true;
+      if (quiz.correct) quiz.score++;
+      renderQuiz();
+    }
+
+    function nextQuiz() {
+      quiz.index++;
+      quiz.locked = false;
+      quiz.selected = '';
+      quiz.correct = false;
+      quiz.order = [];
+      renderQuiz();
+    }
+
+    function renderQuizResult() {
+      const reward = quiz.score + 1;
+      const firstToday = !quizDoneToday();
+      if (firstToday && !quiz.rewardAdded) {
+        state.stars += reward;
+        state.lastQuizDate = today;
+        state.lastQuizReward = reward;
+        quiz.rewardAdded = true;
+        saveState();
+      }
+      renderChrome();
+      const title = quiz.score >= 8 ? 'Вы — тревел-профи!' : quiz.score >= 5 ? 'Отличный маршрут!' : 'Путешествие начинается!';
+      page.innerHTML = `<div class="quiz-shell"><div class="quiz-result"><div class="result-art"></div><div class="result-reward">${firstToday?'+':''}${reward} ${starIcon()}</div><h1>${title}</h1><p>${firstToday?`Базовая звезда и ${quiz.score} за правильные ответы уже на балансе.`:'Сегодня награда уже была начислена, но результат всё равно отличный.'}</p><button class="primary wide" data-go="shop">Выбрать приз</button><button class="secondary wide" style="margin-top:8px" data-go="home">На главную</button></div></div>`;
+    }
+
+    function showToast(message) {
+      clearTimeout(toastTimer);
+      toast.innerHTML = esc(message).replace(/★/g, starIcon());
+      toast.classList.add('show');
+      toastTimer = setTimeout(()=>toast.classList.remove('show'), 2200);
+    }
+
+    app.addEventListener('click', e => {
+      const goEl = e.target.closest('[data-go]');
+      if (goEl) return go(goEl.dataset.go);
+      const actionEl = e.target.closest('[data-action]');
+      if (actionEl) {
+        const action = actionEl.dataset.action;
+        if (action === 'start-quiz') startQuiz();
+        if (action === 'fact-next') changeFact(1);
+        if (action === 'fact-prev') changeFact(-1);
+        if (action === 'exit-quiz') go('home');
+        if (action === 'quiz-next') nextQuiz();
+        if (action === 'check-order') checkOrder();
+        if (action === 'marketing-cta') { showToast('Маршрут сохранён в идеи ✓'); setTimeout(nextQuiz, 420); }
+        return;
+      }
+      const answer = e.target.closest('[data-quiz-answer]'); if (answer) return answerQuiz(answer.dataset.quizAnswer);
+      const up = e.target.closest('[data-order-up]'); if (up) return moveOrder(+up.dataset.orderUp, -1);
+      const down = e.target.closest('[data-order-down]'); if (down) return moveOrder(+down.dataset.orderDown, 1);
+      const tab = e.target.closest('[data-task-tab]'); if (tab) { taskTab = tab.dataset.taskTab; return renderTasks(); }
+      const filter = e.target.closest('[data-shop-filter]'); if (filter) { shopFilter = filter.dataset.shopFilter; return renderShop(); }
+      const buy = e.target.closest('[data-buy]'); if (buy) return openRewardModal(buy.dataset.buy);
+      const claim = e.target.closest('[data-claim-task]'); if (claim) return claimTask(claim.dataset.claimTask);
+      const taskAction = e.target.closest('[data-task-action]');
+      if (taskAction) {
+        if (taskAction.dataset.taskAction === 'go-facts') go('facts');
+        if (taskAction.dataset.taskAction === 'start-quiz') startQuiz();
+        if (taskAction.dataset.taskAction === 'save-direction') { state.savedDirection = true; saveState(); showToast('Направление сохранено ✓'); renderTasks(); }
+        return;
+      }
+      if (e.target.closest('[data-modal-close]') || e.target === modal) { modal.classList.remove('show'); pendingReward = null; }
+      if (e.target.closest('[data-modal-confirm]')) confirmReward();
+    });
+
+    view.addEventListener('scroll', syncRewardHeader, { passive: true });
+
+    window.addEventListener('hashchange', () => {
+      const next = location.hash.replace('#','') || 'home';
+      if (next !== route) { route = next; if (route === 'quiz') startQuiz(); else render(); }
+    });
+
+    if (!['home','facts','tasks','shop','quiz'].includes(route)) route = 'home';
+    if (route === 'quiz') startQuiz(); else render();
+  </script>
+</body>
+</html>
