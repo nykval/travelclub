@@ -197,7 +197,11 @@
     .view::-webkit-scrollbar { display: none; }
     .view.quiz-view { background: var(--bg); }
     .view.fact-view { overflow: hidden; }
-    .view.reward-view { background: linear-gradient(135deg, #ff8b35 0%, #ffc94a 48%, #ffe176 100%); }
+    .view.reward-view {
+      background:
+        linear-gradient(135deg, #edc9ff 0%, #d4a9ff 46%, #a878f2 100%) top / 100% 430px no-repeat,
+        #fff;
+    }
     .page-content { padding: 4px 16px 110px; }
     .page-content.quiz-page { min-height: calc(100% - 76px); padding: 0; }
     .page-content.facts-page {
@@ -207,7 +211,13 @@
       overflow: hidden;
       padding: 8px 16px 94px;
     }
-    .page-content.rewards-page { min-height: calc(100% - 76px); padding: 0 0 110px; }
+    .page-content.rewards-page {
+      min-height: calc(100% - 76px);
+      display: flex;
+      flex-direction: column;
+      padding: 0;
+      background: transparent;
+    }
 
     .bottom-nav {
       position: absolute;
@@ -368,10 +378,11 @@
     .primary:disabled { background: #e2e0e9; color: #95919e; box-shadow: none; cursor: default; }
     .wide { width: 100%; }
 
-    .quick-grid { display: grid; grid-template-columns: 1fr; gap: 2px; }
+    .quick-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
     .quick-card {
       width: 100%;
-      aspect-ratio: 1734 / 907;
+      min-width: 0;
+      aspect-ratio: 1920 / 900;
       display: block;
       padding: 0;
       border: 0;
@@ -476,16 +487,17 @@
       font-size: 44px;
       font-weight: 950;
       line-height: 1;
-      box-shadow: 0 16px 40px rgba(102,60,0,.12);
+      box-shadow: 0 16px 40px rgba(75,44,137,.15);
     }
     .rewards-balance .star { width: 43px; height: 43px; background-size: 62px 62px; }
     .rewards-hero p { margin: 22px 0 0; font-size: 21px; font-weight: 800; line-height: 1.25; }
     .rewards-sheet {
+      flex: 1;
       min-height: 620px;
-      padding: 24px 16px 34px;
+      padding: 24px 16px max(124px, calc(104px + env(safe-area-inset-bottom)));
       border-radius: 34px 34px 0 0;
       background: #fff;
-      box-shadow: 0 -9px 34px rgba(101,60,0,.08);
+      box-shadow: 0 -9px 34px rgba(75,44,137,.09);
     }
     .rewards-sheet-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 17px; }
     .rewards-sheet-head h1 { margin: 0; font-size: 30px; line-height: 1; letter-spacing: -.04em; }
@@ -785,8 +797,8 @@
 
         <div class="section-title-row"><h2>Исследовать</h2></div>
         <div class="quick-grid">
-          <button class="quick-card" data-go="facts" aria-label="Открыть факт дня"><img src="assets/ChatGPT Image 23 сент. 2026 г., 22_32_28.png" alt=""></button>
-          <button class="quick-card" data-go="tasks" aria-label="Открыть задания"><img src="assets/ChatGPT Image 23 сент. 2026 г., 22_33_15.png" alt=""></button>
+          <button class="quick-card" data-go="facts" aria-label="Открыть факт дня"><img src="assets/2 1.svg" alt=""></button>
+          <button class="quick-card" data-go="tasks" aria-label="Открыть задания"><img src="assets/3 1.svg" alt=""></button>
         </div>`;
     }
 
@@ -859,7 +871,16 @@
         stage?.classList.add('advancing');
         card.style.transform = `translate3d(${delta > 0 ? '-125%' : '125%'}, -4px, 0) rotate(${delta > 0 ? '-10deg' : '10deg'})`;
         card.style.opacity = '0';
-        setTimeout(() => changeFact(delta), 390);
+        let finished = false;
+        const finishChange = () => {
+          if (finished) return;
+          finished = true;
+          changeFact(delta);
+        };
+        card.addEventListener('transitionend', event => {
+          if (event.propertyName === 'transform') finishChange();
+        });
+        setTimeout(finishChange, 480);
       };
 
       const settle = () => {
